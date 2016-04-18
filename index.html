@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Hello Vue</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div id="app">
+	<h1>{{ title }}</h1>
+	<p>{{ body }}</p>
+	
+</div>
+
+<img src="cat.jpg" alt="">
+<div class="btn btn-primary" id="button">Convert</div>
+
+</body>
+<script src="html2canvas.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.18/vue.min.js"></script>
+<script>
+
+
+
+var data = {
+	title: 'No title yet',
+	body: 'No body yet'
+};
+	new Vue({
+		el: '#app',
+		data: data,
+		ready: function(){
+			var self = this;
+		    $.get("http://jsonplaceholder.typicode.com/posts/1", function(data, status){
+		        self.title = data['title'];
+		        self.body = data['body'];
+			})
+		}
+	})
+
+	$('#button').click(function(){
+		html2canvas($('body'), {
+			background: '#ccc',
+			allowTaint: true,
+		  onrendered: function(canvas) {
+		    document.body.appendChild(canvas);
+
+		     var canvasData = canvas.toDataURL("image/png");
+		     $.ajax({
+				type: "POST",
+				url: "process.php",
+				data: { 
+					image_data: canvasData
+				},
+			  	success: function(result){
+			  		console.log(result);
+		        	var deal = $("body").append('<img src="'+result+'">');
+		        	console.log(deal);
+		    	}
+			})
+		  }
+		})
+	});
+</script>
+</html>
