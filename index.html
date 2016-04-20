@@ -2,53 +2,44 @@
 <html lang="en">
 <head>
 <title>Hello Vue</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <script src="http://code.jquery.com/jquery.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
 
 <div id="app">
-	<h1>{{ title }}</h1>
-	<p>{{ body }}</p>
-	
+<h1>Some text here</h1>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam provident sed similique accusamus temporibus recusandae aut qui, accusantium porro tempora praesentium nulla, minima sapiente ab error non ratione reprehenderit labore.</p>
 </div>
 
-<img src="cat.jpg" alt="">
+<img src="image.jpg">
 <div class="btn btn-primary" id="button">Convert</div>
 
 </body>
 <script src="html2canvas.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.18/vue.min.js"></script>
 <script>
 
-
-
-var data = {
-	title: 'No title yet',
-	body: 'No body yet'
-};
-	new Vue({
-		el: '#app',
-		data: data,
-		ready: function(){
-			var self = this;
-		    $.get("http://jsonplaceholder.typicode.com/posts/1", function(data, status){
-		        self.title = data['title'];
-		        self.body = data['body'];
-			})
-		}
-	})
-
 	$('#button').click(function(){
+		// doubles the size of the original
+		var w = 1000;
+		var h = 1000;
+		var div = document.querySelector('#divtoconvert');
+		var canvas = document.createElement('canvas');
+		canvas.width = w*2;
+		canvas.height = h*2;
+		canvas.style.width = w + 'px';
+		canvas.style.height = h + 'px';
+		var context = canvas.getContext('2d');
+		context.scale(2,2);
+
 		html2canvas($('body'), {
+			canvas: canvas,
 			background: '#ccc',
 			allowTaint: true,
-		  onrendered: function(canvas) {
-		    document.body.appendChild(canvas);
-
-		     var canvasData = canvas.toDataURL("image/png");
-		     $.ajax({
+		}).then(function(canvas) {
+		    var canvasData = canvas.toDataURL("image/png");
+		    $.ajax({
 				type: "POST",
 				url: "process.php",
 				data: { 
@@ -60,8 +51,7 @@ var data = {
 		        	console.log(deal);
 		    	}
 			})
-		  }
-		})
+		});
 	});
 </script>
 </html>
